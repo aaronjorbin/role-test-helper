@@ -1,0 +1,19 @@
+{
+  "name": "role-test-helper",
+  "version": "0.1.0",
+  "description": "A WordPress plugin to help test user roles and capabilities",
+  "author": "Your Name",
+  "license": "GPL-2.0-or-later",
+  "main": "role-test-helper.php",
+  "scripts": {
+    "start": "wp-env start",
+    "stop": "wp-env stop",
+    "destroy": "wp-env destroy",
+    "test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/role-test-helper vendor/bin/phpunit",
+    "lint:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpcs",
+    "analyze:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpstan"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^5.11.0"
+  }
+}
