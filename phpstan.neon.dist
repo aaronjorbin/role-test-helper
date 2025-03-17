@@ -1,0 +1,15 @@
+parameters:
+  level: 5
+  paths:
+    - role-test-helper.php
+    - includes/
+  excludePaths:
+    - vendor/
+    - tests/
+  scanDirectories:
+    - %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs
+    - %currentWorkingDirectory%/vendor/php-stubs/wordpress-globals
+  bootstrapFiles:
+    - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+  treatPhpDocTypesAsCertain: false
+  inferPrivatePropertyTypeFromConstructor: true
