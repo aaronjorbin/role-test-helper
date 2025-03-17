@@ -2,7 +2,7 @@
   "name": "role-test-helper",
   "version": "0.1.0",
   "description": "A WordPress plugin to help test user roles and capabilities",
-  "author": "Your Name",
+  "author": "Aaron Jorbin <aaron@jorb.in> (https://aaron.jorb.in)",
   "license": "GPL-2.0-or-later",
   "main": "role-test-helper.php",
   "scripts": {

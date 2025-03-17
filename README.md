@@ -2,6 +2,9 @@
 
 A WordPress plugin to help developers test user roles and capabilities in non-production environments.
 
+[![Author: Aaron Jorbin](https://img.shields.io/badge/Author-Aaron%20Jorbin-blue.svg)](https://aaron.jorb.in)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-aaronjorbin%2Frole--test--helper-green.svg)](https://github.com/aaronjorbin/role-test-helper)
+
 ## Description
 
 Role Test Helper is designed to simplify WordPress role testing by providing:
@@ -28,7 +31,7 @@ Role Test Helper is designed to simplify WordPress role testing by providing:
 ### Using Composer
 
 ```bash
-composer require jorbin/role-test-helper
+composer require aaronjorbin/role-test-helper
 ```
 
 ### Local Development with wp-env
