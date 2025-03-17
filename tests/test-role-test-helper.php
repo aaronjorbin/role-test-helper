@@ -33,7 +33,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		// Set the environment type.
 		add_filter(
 			'wp_get_environment_type',
-			function() use ( $env_type ) {
+			function () use ( $env_type ) {
 				return $env_type;
 			}
 		);
@@ -41,7 +41,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		// Set the site URL.
 		add_filter(
 			'site_url',
-			function() use ( $site_url ) {
+			function () use ( $site_url ) {
 				return $site_url;
 			},
 			100
@@ -51,7 +51,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		if ( null !== $filter_value ) {
 			add_filter(
 				'role_test_helper_is_active',
-				function() use ( $filter_value ) {
+				function () use ( $filter_value ) {
 					return $filter_value;
 				},
 				10,
@@ -70,14 +70,14 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 */
 	public function environment_provider() {
 		return array(
-			'production environment'           => array( 'production', 'https://example.com', false ),
-			'local environment'                => array( 'local', 'https://example.com', true ),
-			'development environment'          => array( 'development', 'https://example.com', true ),
-			'staging environment'              => array( 'staging', 'https://example.com', true ),
-			'localhost URL'                    => array( 'production', 'http://localhost/wordpress', true ),
-			'local domain'                     => array( 'production', 'http://example.local', true ),
-			'filter override to true'          => array( 'production', 'https://example.com', true, true ),
-			'filter override to false'         => array( 'local', 'http://localhost/wordpress', false, false ),
+			'production environment'   => array( 'production', 'https://example.com', false ),
+			'local environment'        => array( 'local', 'https://example.com', true ),
+			'development environment'  => array( 'development', 'https://example.com', true ),
+			'staging environment'      => array( 'staging', 'https://example.com', true ),
+			'localhost URL'            => array( 'production', 'http://localhost/wordpress', true ),
+			'local domain'             => array( 'production', 'http://example.local', true ),
+			'filter override to true'  => array( 'production', 'https://example.com', true, true ),
+			'filter override to false' => array( 'local', 'http://localhost/wordpress', false, false ),
 		);
 	}
 
@@ -88,16 +88,19 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		global $admin_page_hooks;
 
 		// Set non-production environment.
-		add_filter( 'wp_get_environment_type', function() {
-			return 'development';
-		} );
+		add_filter(
+			'wp_get_environment_type',
+			function () {
+				return 'development';
+			}
+		);
 
 		// Create an instance of the plugin.
 		$plugin = new Role_Test_Helper();
-		
+
 		// Call the admin menu hook.
 		do_action( 'admin_menu' );
-		
+
 		// Check if the admin page was registered.
 		$this->assertArrayHasKey( 'role-test-helper', $admin_page_hooks );
 	}
@@ -128,11 +131,11 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		$plugin = new Role_Test_Helper();
 
 		// Test with non-role username.
-		$result = $plugin->authenticate_role_login( null, 'nonexistent_role', 'password' );
+		$result = $plugin->authenticate_role_login( null, 'nonexistent_role' );
 		$this->assertNull( $result );
 
 		// Test with role username.
-		$result = $plugin->authenticate_role_login( null, 'editor', 'any_password' );
+		$result = $plugin->authenticate_role_login( null, 'editor' );
 		$this->assertInstanceOf( WP_User::class, $result );
 		$this->assertEquals( 'editor', $result->user_login );
 		$this->assertTrue( in_array( 'editor', $result->roles, true ) );
@@ -152,13 +155,13 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 
 		// Create a user with the role name.
 		$user_id = wp_create_user( 'author', 'password', 'author@example.com' );
-		$user = new WP_User( $user_id );
+		$user    = new WP_User( $user_id );
 		$user->set_role( 'author' );
 
 		$plugin = new Role_Test_Helper();
 
 		// Test with existing role user.
-		$result = $plugin->authenticate_role_login( null, 'author', 'wrong_password' );
+		$result = $plugin->authenticate_role_login( null, 'author' );
 		$this->assertInstanceOf( WP_User::class, $result );
 		$this->assertEquals( 'author', $result->user_login );
 		$this->assertEquals( $user_id, $result->ID );
@@ -177,7 +180,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		$plugin = new Role_Test_Helper();
 
 		// Test with role username but plugin inactive.
-		$result = $plugin->authenticate_role_login( null, 'editor', 'password' );
+		$result = $plugin->authenticate_role_login( null, 'editor' );
 		$this->assertNull( $result );
 	}
 
@@ -192,10 +195,10 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 
 		// Create a test user.
 		$user_id = wp_create_user( 'testuser', 'password', 'test@example.com' );
-		$user = new WP_User( $user_id );
+		$user    = new WP_User( $user_id );
 
 		// Test that the plugin doesn't override an already authenticated user.
-		$result = $plugin->authenticate_role_login( $user, 'editor', 'password' );
+		$result = $plugin->authenticate_role_login( $user, 'editor' );
 		$this->assertSame( $user, $result );
 
 		// Cleanup - delete the user.

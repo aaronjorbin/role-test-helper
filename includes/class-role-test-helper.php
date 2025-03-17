@@ -67,7 +67,7 @@ class Role_Test_Helper {
 		}
 
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
-		add_filter( 'authenticate', array( $this, 'authenticate_role_login' ), 20, 3 );
+		add_filter( 'authenticate', array( $this, 'authenticate_role_login' ), 20, 2 );
 	}
 
 	/**
@@ -116,10 +116,9 @@ class Role_Test_Helper {
 	 *
 	 * @param WP_User|WP_Error|null $user The user object, WP_Error, or null.
 	 * @param string                $username The username.
-	 * @param string                $password The password.
 	 * @return WP_User|WP_Error|null The user object, WP_Error, or null.
 	 */
-	public function authenticate_role_login( $user, $username, $password ) {
+	public function authenticate_role_login( $user, $username ) {
 		if ( ! $this->is_active || $user instanceof WP_User ) {
 			return $user;
 		}
@@ -152,7 +151,7 @@ class Role_Test_Helper {
 		// Send a notice about the created user.
 		add_action(
 			'admin_notices',
-			function() use ( $username, $role ) {
+			function () use ( $username, $role ) {
 				?>
 				<div class="notice notice-success">
 					<p>
@@ -216,7 +215,7 @@ class Role_Test_Helper {
 					<?php
 					$wp_roles  = wp_roles();
 					$role_list = implode( ', ', array_keys( $wp_roles->roles ) );
-					echo sprintf(
+					printf(
 						/* translators: %s: comma-separated list of roles */
 						esc_html__( 'Available roles: %s', 'role-test-helper' ),
 						'<code>' . esc_html( $role_list ) . '</code>'

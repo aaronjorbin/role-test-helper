@@ -10,11 +10,11 @@
     "stop": "wp-env stop",
     "destroy": "wp-env destroy",
     "test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/role-test-helper vendor/bin/phpunit",
-    "lint:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpcs",
-    "fix:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpcbf",
-    "analyze:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpstan",
-    "test": "npm run test:php",
-    "lint": "npm run lint:php && npm run analyze:php"
+    "lint:php": "composer phpcs",
+    "fix:php": "composer phpcbf",
+    "analyze:php": "php -d memory_limit=512M vendor/bin/phpstan analyze",
+    "test": "composer phpunit",
+    "lint": "composer phpcs && php -d memory_limit=512M vendor/bin/phpstan analyze"
   },
   "devDependencies": {
     "@wordpress/env": "^5.11.0"
