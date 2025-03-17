@@ -21,7 +21,13 @@
     "phpcs": "phpcs",
     "phpcbf": "phpcbf",
     "phpstan": "phpstan analyze",
-    "phpunit": "phpunit"
+    "phpunit": "phpunit",
+    "post-install-cmd": [
+      "[ -d .git ] && ./bin/setup-hooks.sh || echo 'Skipping git hooks setup (not a git repository)'"
+    ],
+    "post-update-cmd": [
+      "[ -d .git ] && ./bin/setup-hooks.sh || echo 'Skipping git hooks setup (not a git repository)'"
+    ]
   },
   "config": {
     "allow-plugins": {

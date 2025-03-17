@@ -105,8 +105,26 @@ add_filter( 'role_test_helper_is_active', function( $is_allowed, $environment_ty
 # Install PHP dependencies
 composer install
 
-# Install Node.js dependencies
+# Install Node.js dependencies and git hooks
 npm install
+```
+
+### Git Hooks
+
+This project uses git hooks to ensure code quality:
+
+- **Pre-commit Hook**: Automatically runs PHP CodeSniffer, PHPStan, and PHPUnit tests before each commit
+  - Prevents commits if linting or tests fail
+  - Runs PHPUnit tests if the wp-env environment is running (otherwise skips tests)
+  - Ensures only quality code is committed to the repository
+
+> **Note**: For full test coverage in the pre-commit hook, make sure to start the WordPress environment with `npm run start` before committing.
+
+If the git hooks are not working, you can manually set them up:
+
+```bash
+# Manually set up git hooks
+./bin/setup-hooks.sh
 ```
 
 ### Testing
@@ -123,6 +141,9 @@ composer phpcbf
 
 # Run PHPStan static analysis
 composer phpstan
+
+# Run all checks (same as pre-commit hook)
+npm run lint && composer phpunit
 
 # Start the development environment
 npm run start

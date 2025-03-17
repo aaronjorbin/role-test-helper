@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running pre-commit checks..."
+
+# Run linting
+echo "Running PHP CodeSniffer..."
+if ! composer phpcs; then
+  echo "❌ PHP CodeSniffer failed. Please fix the issues before committing."
+  exit 1
+fi
+
+# Run static analysis
+echo "Running PHPStan..."
+if ! php -d memory_limit=512M vendor/bin/phpstan analyze; then
+  echo "❌ PHPStan failed. Please fix the issues before committing."
+  exit 1
+fi
+
+# Run tests in wp-env environment if it's running
+echo "Running PHPUnit tests in wp-env environment..."
+if wp-env status 2>/dev/null | grep -q "running"; then
+  # Environment is running, run the tests
+  if ! npm run test:php; then
+    echo "❌ PHPUnit tests failed. Please fix the tests before committing."
+    exit 1
+  fi
+else
+  echo "⚠️ wp-env is not running. Skipping PHPUnit tests."
+  echo "  To run tests before committing, start the environment with: npm run start"
+fi
+
+echo "✅ All checks passed successfully!"
