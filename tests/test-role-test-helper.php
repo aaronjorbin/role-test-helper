@@ -27,10 +27,10 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 
 		// Create an instance of the plugin.
 		$plugin = new Role_Test_Helper();
-		
+
 		// Call the admin menu hook.
 		do_action( 'admin_menu' );
-		
+
 		// Check if the admin page was registered.
 		$this->assertArrayHasKey( 'role-test-helper', $admin_page_hooks );
 	}
