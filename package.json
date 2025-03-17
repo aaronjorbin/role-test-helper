@@ -11,7 +11,10 @@
     "destroy": "wp-env destroy",
     "test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/role-test-helper vendor/bin/phpunit",
     "lint:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpcs",
-    "analyze:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpstan"
+    "fix:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpcbf",
+    "analyze:php": "wp-env run cli --env-cwd=wp-content/plugins/role-test-helper composer phpstan",
+    "test": "npm run test:php",
+    "lint": "npm run lint:php && npm run analyze:php"
   },
   "devDependencies": {
     "@wordpress/env": "^5.11.0"
