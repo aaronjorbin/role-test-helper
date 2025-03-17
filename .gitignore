@@ -1,0 +1,49 @@
+# Composer
+/vendor/
+composer.lock
+
+# Node.js
+/node_modules/
+package-lock.json
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# WordPress
+/wp-content/
+/wp-admin/
+/wp-includes/
+wp-config.php
+
+# Environment
+.env
+.env.*
+!.env.example
+.wp-env.override.json
+
+# OS Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Build files
+/build/
+/dist/
+*.zip
+
+# PHPUnit
+phpunit.xml
+.phpunit.result.cache
+
+# Coverage reports
+/coverage/
+clover.xml
+
+# PHPStan
+phpstan.neon
+
+# Temporary files
+*.swp
+*.swo
+*~
