@@ -48,8 +48,17 @@ jobs:
     needs: compute-previous-wordpress-version
     strategy:
       matrix:
-        php: [7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
-        wordpress: ["${{needs.compute-previous-wordpress-version.outputs.latest-wordpress-version}}", "${{ needs.compute-previous-wordpress-version.outputs.previous-wordpress-version }}"]
+        php:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - '8.3'
+          - '8.4'
+
+        wordpress:
+          - "${{needs.compute-previous-wordpress-version.outputs.latest-wordpress-version}}"
+          - "${{ needs.compute-previous-wordpress-version.outputs.previous-wordpress-version }}"
 
     name: PHP ${{ matrix.php }} / WP ${{ matrix.wordpress }}
 
