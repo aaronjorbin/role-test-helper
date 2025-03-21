@@ -7,37 +7,63 @@ on:
     branches: [ main ]
 
 jobs:
+  compute-previous-wordpress-version:
+    runs-on: ubuntu-latest
+    outputs:
+      latest-wordpress-version: ${{ steps.get-latest-wordpress-version.outputs.latest-wordpress-version }}
+      previous-wordpress-version: ${{ steps.get-previous-wordpress-version.outputs.previous-wordpress-version }}
+
+    steps:
+      - name: Get latest WordPress version
+        id: get-latest-wordpress-version
+        run: |
+          curl \
+            -H "Accept: application/json" \
+            -o versions.json \
+            "http://api.wordpress.org/core/stable-check/1.0/"
+          LATEST_WP_VERSION=$(jq --raw-output 'with_entries(select(.value=="latest"))|keys[]' versions.json)
+          echo "latest-wordpress-version=${LATEST_WP_VERSION}" >> $GITHUB_OUTPUT
+          rm versions.json
+
+      - name: Get previous WordPress version
+        id: get-previous-wordpress-version
+        run: |
+          curl \
+          -H "Accept: application/json" \
+          -o versions.json \
+          "http://api.wordpress.org/core/stable-check/1.0/"
+          LATEST_WP_VERSION=$(jq --raw-output 'with_entries(select(.value=="latest"))|keys[]' versions.json)
+          IFS='.' read LATEST_WP_MAJOR LATEST_WP_MINOR LATEST_WP_PATCH <<< "${LATEST_WP_VERSION}"
+          if [[ ${LATEST_WP_MINOR} == "0" ]]; then
+            PREVIOUS_WP_SERIES="$((LATEST_WP_MAJOR - 1)).9"
+          else
+            PREVIOUS_WP_SERIES="${LATEST_WP_MAJOR}.$((LATEST_WP_MINOR - 1))"
+          fi
+          PREVIOUS_WP_VERSION=$(jq --raw-output --arg series "${PREVIOUS_WP_SERIES}" 'with_entries(select(.key|startswith($series)))|keys[-1]' versions.json)
+          echo "previous-wordpress-version=${PREVIOUS_WP_VERSION}" >> $GITHUB_OUTPUT
+          rm versions.json
+
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [7.4, 8.0, 8.1]
-        wordpress: [latest, '6.1', '6.0', '5.9']
-        include:
-          - php: 7.4
-            wordpress: '5.8'
-          - php: 7.4
-            wordpress: '5.7'
-        exclude:
-          - php: 8.1
-            wordpress: '5.9'
+        php: [7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
+        wordpress: ["${{needs.compute-previous-wordpress-version.outputs.latest-wordpress-version}}", "${{ needs.compute-previous-wordpress-version.outputs.previous-wordpress-version }}"]
 
     name: PHP ${{ matrix.php }} / WP ${{ matrix.wordpress }}
-    
-    steps:
-    - uses: actions/checkout@v3
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, intl, gd, exif, iconv
-        coverage: none
-        tools: composer:v2
+    env:
+      WP_ENV_PHP_VERSION: ${{ matrix.php }}
+      WP_ENV_CORE: ${{ matrix.wordpress == '' && 'WordPress/WordPress' || format( 'https://wordpress.org/wordpress-{0}.zip', matrix.wordpress ) }}
+
+
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
     - name: Install dependencies
       run: |
         composer install --prefer-dist --no-progress --no-suggest
+        npm ci
 
     - name: PHP CodeSniffer
       run: |
@@ -47,10 +73,13 @@ jobs:
       run: |
         composer phpstan
 
-    - name: Install WordPress test environment
-      run: |
-        bash bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wordpress }}
+    - name: Start Docker environment
+      run: npm run wp-env start
 
-    - name: PHPUnit
+    - name: Log running Docker containers
+      run: docker ps -a
+
+    - name: Running unit tests
       run: |
-        composer phpunit
+          set -o pipefail
+          npm run test:php
