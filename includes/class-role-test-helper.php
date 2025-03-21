@@ -26,6 +26,27 @@ class Role_Test_Helper {
 	}
 
 	/**
+	 * Get the current environment type.
+	 *
+	 * Returns the current environment type, filtered through the `role_test_helper_environment_type` filter.
+	 * By default, returns the value from `wp_get_environment_type()`.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string The current environment type. One of: 'production', 'staging', 'development', or 'local'.
+	 */
+	private function get_environment_type() {
+		/**
+		 * Filter the environment type for the Role Test Helper plugin.
+		 *
+		 * @since 0.1.0
+		 *
+		 * @param string $environment_type The current environment type. One of: 'production', 'staging', 'development', or 'local'.
+		 */
+		return apply_filters( 'role_test_helper_environment_type', wp_get_environment_type() );
+	}
+
+	/**
 	 * Check if the plugin should be active in the current environment.
 	 *
 	 * @return void
@@ -34,7 +55,7 @@ class Role_Test_Helper {
 		$is_allowed = true;
 
 		// Check environment type.
-		$environment_type = wp_get_environment_type();
+		$environment_type = $this->get_environment_type();
 		if ( 'production' === $environment_type ) {
 			$is_allowed = false;
 		}
@@ -236,6 +257,3 @@ class Role_Test_Helper {
 		return $this->is_active;
 	}
 }
-
-// Initialize the class.
-new Role_Test_Helper();

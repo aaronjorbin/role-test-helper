@@ -32,7 +32,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	public function test_environment_detection( $env_type, $site_url, $expected, $filter_value = null ) {
 		// Set the environment type.
 		add_filter(
-			'wp_get_environment_type',
+			'role_test_helper_environment_type',
 			function () use ( $env_type ) {
 				return $env_type;
 			}
