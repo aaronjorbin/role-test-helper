@@ -64,6 +64,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt install docker-compose -y
         composer install --prefer-dist --no-progress --no-suggest
         npm ci
 
