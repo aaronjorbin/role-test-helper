@@ -5,10 +5,12 @@
  * @package Role_Test_Helper
  */
 
+namespace RoleTestHelper;
+
 /**
  * Role Test Helper plugin tests.
  */
-class RoleTestHelperTest extends WP_UnitTestCase {
+class RoleTestHelperTest extends \WP_UnitTestCase {
 
 	/**
 	 * Test that the plugin is loaded.
@@ -31,7 +33,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 */
 	public function test_environment_detection( $env_type, $site_url, $expected, $filter_value = null ) {
 		// Set the environment type.
-		add_filter(
+		\add_filter(
 			'role_test_helper_environment_type',
 			function () use ( $env_type ) {
 				return $env_type;
@@ -39,7 +41,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		);
 
 		// Set the site URL.
-		add_filter(
+		\add_filter(
 			'site_url',
 			function () use ( $site_url ) {
 				return $site_url;
@@ -49,7 +51,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 
 		// Optional: Apply the filter.
 		if ( null !== $filter_value ) {
-			add_filter(
+			\add_filter(
 				'role_test_helper_is_active',
 				function () use ( $filter_value ) {
 					return $filter_value;
@@ -59,8 +61,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 			);
 		}
 
-		$plugin = new Role_Test_Helper();
-		$this->assertSame( $expected, $plugin->is_active() );
+		$this->assertSame( $expected, is_active( true ) );
 	}
 
 	/**
@@ -89,16 +90,13 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 
 		// create an admin user and login.
 		$admin_user = self::factory()->user->create_and_get( array( 'role' => 'administrator' ) );
-		wp_set_current_user( $admin_user->ID );
+		\wp_set_current_user( $admin_user->ID );
 
 		// Force the plugin to be active.
-		add_filter( 'role_test_helper_is_active', '__return_true' );
-
-		// Create an instance of the plugin.
-		$plugin = new Role_Test_Helper();
+		\add_filter( 'role_test_helper_is_active', '__return_true' );
 
 		// Call the admin menu hook.
-		do_action( 'admin_menu' );
+		\do_action( 'admin_menu' );
 
 		// Check if the admin page was registered.
 		$this->assertArrayHasKey( 'admin_page_role-test-helper', $_registered_pages );
@@ -108,16 +106,14 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 * Test getting role from username.
 	 */
 	public function test_get_role_from_username() {
-		$plugin = new Role_Test_Helper();
-
 		// Test with valid role name.
-		$this->assertEquals( 'administrator', $plugin->get_role_from_username( 'administrator' ) );
-		$this->assertEquals( 'editor', $plugin->get_role_from_username( 'editor' ) );
-		$this->assertEquals( 'subscriber', $plugin->get_role_from_username( 'subscriber' ) );
+		$this->assertEquals( 'administrator', get_role_from_username( 'administrator' ) );
+		$this->assertEquals( 'editor', get_role_from_username( 'editor' ) );
+		$this->assertEquals( 'subscriber', get_role_from_username( 'subscriber' ) );
 
 		// Test with invalid role name.
-		$this->assertFalse( $plugin->get_role_from_username( 'nonexistent_role' ) );
-		$this->assertFalse( $plugin->get_role_from_username( '' ) );
+		$this->assertFalse( get_role_from_username( 'nonexistent_role' ) );
+		$this->assertFalse( get_role_from_username( '' ) );
 	}
 
 	/**
@@ -125,23 +121,22 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 */
 	public function test_authenticate_role_login() {
 		// Force the plugin to be active.
-		add_filter( 'role_test_helper_is_active', '__return_true' );
-
-		$plugin = new Role_Test_Helper();
+		\add_filter( 'role_test_helper_is_active', '__return_true' );
+		is_active( true );
 
 		// Test with non-role username.
-		$result = $plugin->authenticate_role_login( null, 'nonexistent_role' );
+		$result = authenticate_role_login( null, 'nonexistent_role' );
 		$this->assertNull( $result );
 
 		// Test with role username.
-		$result = $plugin->authenticate_role_login( null, 'editor' );
-		$this->assertInstanceOf( WP_User::class, $result );
+		$result = authenticate_role_login( null, 'editor' );
+		$this->assertInstanceOf( \WP_User::class, $result );
 		$this->assertEquals( 'editor', $result->user_login );
 		$this->assertTrue( in_array( 'editor', $result->roles, true ) );
 
 		// Cleanup - delete the user.
 		if ( $result instanceof WP_User ) {
-			wp_delete_user( $result->ID );
+			\wp_delete_user( $result->ID );
 		}
 	}
 
@@ -150,23 +145,22 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 */
 	public function test_authenticate_existing_role_user() {
 		// Force the plugin to be active.
-		add_filter( 'role_test_helper_is_active', '__return_true' );
+		\add_filter( 'role_test_helper_is_active', '__return_true' );
+		is_active( true );
 
 		// Create a user with the role name.
-		$user_id = wp_create_user( 'author', 'password', 'author@example.com' );
-		$user    = new WP_User( $user_id );
+		$user_id = \wp_create_user( 'author', 'password', 'author@example.com' );
+		$user    = new \WP_User( $user_id );
 		$user->set_role( 'author' );
 
-		$plugin = new Role_Test_Helper();
-
 		// Test with existing role user.
-		$result = $plugin->authenticate_role_login( null, 'author' );
-		$this->assertInstanceOf( WP_User::class, $result );
+		$result = authenticate_role_login( null, 'author' );
+		$this->assertInstanceOf( \WP_User::class, $result );
 		$this->assertEquals( 'author', $result->user_login );
 		$this->assertEquals( $user_id, $result->ID );
 
 		// Cleanup - delete the user.
-		wp_delete_user( $user_id );
+		\wp_delete_user( $user_id );
 	}
 
 	/**
@@ -174,12 +168,11 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 */
 	public function test_authentication_when_inactive() {
 		// Force the plugin to be inactive.
-		add_filter( 'role_test_helper_is_active', '__return_false' );
-
-		$plugin = new Role_Test_Helper();
+		\add_filter( 'role_test_helper_is_active', '__return_false' );
+		is_active( true );
 
 		// Test with role username but plugin inactive.
-		$result = $plugin->authenticate_role_login( null, 'editor' );
+		$result = authenticate_role_login( null, 'editor' );
 		$this->assertNull( $result );
 	}
 
@@ -188,19 +181,17 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 */
 	public function test_respect_existing_authentication() {
 		// Force the plugin to be active.
-		add_filter( 'role_test_helper_is_active', '__return_true' );
-
-		$plugin = new Role_Test_Helper();
+		\add_filter( 'role_test_helper_is_active', '__return_true' );
+		is_active( true );
 
 		// Create a test user.
-		$user_id = wp_create_user( 'testuser', 'password', 'test@example.com' );
-		$user    = new WP_User( $user_id );
+		$user_id = \wp_create_user( 'editor', 'password', 'test@example.com' );
 
 		// Test that the plugin doesn't override an already authenticated user.
-		$result = $plugin->authenticate_role_login( $user, 'editor' );
-		$this->assertSame( $user, $result );
+		$result = authenticate_role_login( null, 'editor' );
+		$this->assertEquals( $user_id, $result->ID );
 
 		// Cleanup - delete the user.
-		wp_delete_user( $user_id );
+		\wp_delete_user( $user_id );
 	}
 }

@@ -14,6 +14,8 @@
  * @package Role_Test_Helper
  */
 
+namespace RoleTestHelper;
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -24,8 +26,8 @@ define( 'ROLE_TEST_HELPER_VERSION', '0.1.0' );
 define( 'ROLE_TEST_HELPER_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ROLE_TEST_HELPER_URL', plugin_dir_url( __FILE__ ) );
 
-// Include the core class.
-require_once ROLE_TEST_HELPER_PATH . 'includes/class-role-test-helper.php';
+// Include the core functionality.
+require_once ROLE_TEST_HELPER_PATH . 'includes/core.php';
 
 // Initialize the plugin.
-new Role_Test_Helper();
+setup_hooks();
