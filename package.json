@@ -9,11 +9,10 @@
     "start": "wp-env start",
     "stop": "wp-env stop",
     "destroy": "wp-env destroy",
-    "test:php": "wp-env run tests-cli \"cd /var/www/html/wp-content/plugins/role-test-helper && vendor/bin/phpunit\"",
     "lint:php": "composer phpcs",
     "fix:php": "composer phpcbf",
     "analyze:php": "php -d memory_limit=512M vendor/bin/phpstan analyze",
-    "test": "composer phpunit",
+    "test": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/role-test-helper/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/role-test-helper/phpunit.xml.dist",
     "lint": "composer phpcs && php -d memory_limit=512M vendor/bin/phpstan analyze",
     "prepare": "husky install"
   },

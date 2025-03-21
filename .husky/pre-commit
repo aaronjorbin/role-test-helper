@@ -21,7 +21,7 @@ fi
 echo "Running PHPUnit tests in wp-env environment..."
 if wp-env status 2>/dev/null | grep -q "running"; then
   # Environment is running, run the tests
-  if ! npm run test:php; then
+  if ! npm run test; then
     echo "❌ PHPUnit tests failed. Please fix the tests before committing."
     exit 1
   fi
