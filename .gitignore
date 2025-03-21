@@ -1,6 +1,5 @@
 # Composer
 /vendor/
-composer.lock
 
 # Node.js
 /node_modules/
