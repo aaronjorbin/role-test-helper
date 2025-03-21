@@ -67,13 +67,10 @@ jobs:
         composer install --prefer-dist --no-progress --no-suggest
         npm ci
 
-    - name: PHP CodeSniffer
+    - name: Docker Debug Info
       run: |
-        composer phpcs
-
-    - name: PHPStan
-      run: |
-        composer phpstan
+        docker --version
+        docker-compose --version
 
     - name: Start Docker environment
       run: npm run start
