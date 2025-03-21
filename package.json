@@ -17,7 +17,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@wordpress/env": "^5.11.0",
-    "husky": "^8.0.3"
+    "@wordpress/env": "^10.2.0",
+    "husky": "^9.1.7"
   }
 }
