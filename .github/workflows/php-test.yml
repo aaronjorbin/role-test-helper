@@ -60,6 +60,8 @@ jobs:
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+    - uses: docker/setup-docker-action@b60f85385d03ac8acfca6d9996982511d8620a19 # 4.3.0
+
     - name: Install dependencies
       run: |
         composer install --prefer-dist --no-progress --no-suggest
