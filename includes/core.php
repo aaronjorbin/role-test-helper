@@ -200,6 +200,7 @@ function add_admin_menu() {
  * @return void
  */
 function render_admin_page() {
+	$is_active = is_active();
 	?>
 	<div class="wrap">
 		<h1><?php echo esc_html__( 'Role Test Helper', 'role-test-helper' ); ?></h1>
@@ -215,17 +216,23 @@ function render_admin_page() {
 				);
 				?>
 			</p>
-			<p>
-				<?php
-				$wp_roles  = wp_roles();
-				$role_list = implode( ', ', array_keys( $wp_roles->roles ) );
-				printf(
-					/* translators: %s: comma-separated list of roles */
-					esc_html__( 'Available roles: %s', 'role-test-helper' ),
-					'<code>' . esc_html( $role_list ) . '</code>'
-				);
-				?>
-			</p>
+			<?php if ( $is_active ) : ?>
+				<p>
+					<?php
+					$wp_roles  = wp_roles();
+					$role_list = implode( ', ', array_keys( $wp_roles->roles ) );
+					printf(
+						/* translators: %s: comma-separated list of roles */
+						esc_html__( 'Available roles: %s', 'role-test-helper' ),
+						'<code>' . esc_html( $role_list ) . '</code>'
+					);
+					?>
+				</p>
+			<?php else : ?>
+				<p>
+					<?php esc_html_e( 'The plugin is currently inactive. It is only active in non-production environments or when the site URL contains .local or localhost.', 'role-test-helper' ); ?>
+				</p>
+			<?php endif; ?>
 		</div>
 	</div>
 	<?php
