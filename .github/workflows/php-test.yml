@@ -74,7 +74,7 @@ jobs:
         composer phpstan
 
     - name: Start Docker environment
-      run: npm run wp-env start
+      run: npm run start
 
     - name: Log running Docker containers
       run: docker ps -a
@@ -82,4 +82,4 @@ jobs:
     - name: Running unit tests
       run: |
           set -o pipefail
-          npm run test:php
+          npm run test
