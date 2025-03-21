@@ -85,15 +85,14 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 	 * Test that the admin menu is added when the plugin is active.
 	 */
 	public function test_admin_menu_when_active() {
-		global $admin_page_hooks;
+		global $_registered_pages;
 
-		// Set non-production environment.
-		add_filter(
-			'wp_get_environment_type',
-			function () {
-				return 'development';
-			}
-		);
+		// create an admin user and login.
+		$admin_user = self::factory()->user->create_and_get( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_user->ID );
+
+		// Force the plugin to be active.
+		add_filter( 'role_test_helper_is_active', '__return_true' );
 
 		// Create an instance of the plugin.
 		$plugin = new Role_Test_Helper();
@@ -102,7 +101,7 @@ class RoleTestHelperTest extends WP_UnitTestCase {
 		do_action( 'admin_menu' );
 
 		// Check if the admin page was registered.
-		$this->assertArrayHasKey( 'role-test-helper', $admin_page_hooks );
+		$this->assertArrayHasKey( 'admin_page_role-test-helper', $_registered_pages );
 	}
 
 	/**
